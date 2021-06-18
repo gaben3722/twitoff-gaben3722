@@ -1,4 +1,5 @@
   
+  
 """
 Main app/routing file for Twitoff.
 The file that holds the function `create_app`
@@ -15,6 +16,7 @@ def create_app():
 
     # initilizes our application
     app = Flask(__name__)
+
     app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -82,5 +84,9 @@ def create_app():
             add_or_update_user(user.name)
         return "Users updated!"
 
-   
+    # @app.route("/say_something")
+    # def say_something():
+    #     """This will be presented when we visit '<BASE_URL>/say_something '"""
+    #     return "I am saying something"
+
     return app
