@@ -11,7 +11,7 @@ class User(DB.Model):
     # creating id column (primary key)
     id = DB.Column(DB.BigInteger, primary_key=True)
     name = DB.Column(DB.String, nullable=False)
-    # newest_tweet_id = DB.Column(DB.BigInteger)
+    newest_tweet_id = DB.Column(DB.BigInteger)
 
     def __repr__(self):
         return f"<User: {self.name}>"
@@ -23,7 +23,7 @@ class User(DB.Model):
 class Tweet(DB.Model):
     """Tweet text and data"""
     id = DB.Column(DB.BigInteger, primary_key=True)
-    text = DB.Column(DB.Unicode(300))
+    text = DB.Column(DB.UnicodeText())
     vect = DB.Column(DB.PickleType, nullable=False)
     user_id = DB.Column(DB.BigInteger, DB.ForeignKey('user.id'))
     user = DB.relationship("User", backref=DB.backref('tweets', lazy=True))

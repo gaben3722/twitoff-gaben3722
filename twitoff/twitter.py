@@ -4,7 +4,7 @@ import spacy
 from .models import DB, Tweet, User
 
 
-nlp = spacy.load("../my_model")
+nlp = spacy.load("my_model")
 
 
 def vectorize_tweet(tweet_text):
@@ -30,6 +30,7 @@ def add_or_update_user(username):
         DB.session.add(db_user)
 
         tweets = user["tweets"]
+
         for tweet in tweets:
             tweet_vector = vectorize_tweet(tweet["full_text"])
             db_tweet = Tweet(
