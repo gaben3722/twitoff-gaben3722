@@ -4,7 +4,7 @@ import spacy
 from .models import DB, Tweet, User
 
 
-nlp = spacy.load("my_model")
+nlp = spacy.load("../my_model")
 
 
 def vectorize_tweet(tweet_text):
