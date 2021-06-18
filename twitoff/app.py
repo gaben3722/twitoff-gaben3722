@@ -1,10 +1,3 @@
-  
-  
-"""
-Main app/routing file for Twitoff.
-The file that holds the function `create_app`
-to collect our modules and organize the flask app.
-"""
 from os import getenv
 from flask import Flask, render_template, request
 from .twitter import add_or_update_user
@@ -13,13 +6,10 @@ from .models import DB, User, Tweet
 
 
 def create_app():
-
     # initilizes our application
     app = Flask(__name__)
-
-    app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
+    app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URI")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
     DB.init_app(app)
 
     @app.route("/")
@@ -33,19 +23,16 @@ def create_app():
         """This will be presented when we visit '<BASE_URL>/compare '"""
         user0, user1 = sorted(
             [request.values["user0"], request.values["user1"]])
-
         if user0 == user1:
             message = "Cannot compare users to themselves!"
         else:
             prediction = predict_user(
                 user0, user1, request.values["tweet_text"])
-
             message = "'{}' is more likely to be said by {} than {}".format(
                 request.values["tweet_text"],
                 user1 if prediction else user0,
                 user0 if prediction else user1
             )
-
         return render_template("prediction.html", title="prediction", message=message)
 
     @app.route("/user", methods=["POST"])
@@ -57,14 +44,10 @@ def create_app():
             if request.method == "POST":
                 add_or_update_user(name)
                 message = "User {} succesfully added!".format(name)
-
             tweets = User.query.filter(User.name == name).one().tweets
-
         except Exception as e:
             message = "Error handling {}: {}".format(name, e)
-
             tweets = []
-
         return render_template("user.html", title=name,
                                tweets=tweets, message=message)
 
@@ -82,11 +65,20 @@ def create_app():
         users = User.query.all()
         for user in users:
             add_or_update_user(user.name)
-        return "Users updated!"
-
+        return "All the users have been updated!"
     # @app.route("/say_something")
     # def say_something():
     #     """This will be presented when we visit '<BASE_URL>/say_something '"""
     #     return "I am saying something"
-
     return app
+
+def insert_example_users():
+    """
+    Will get error if ran twice because of duplicate primary keys
+    Not real data - just to play with
+    """
+    jackblack = User(id=1, name="JackBlack")
+    elonmusk = User(id=2, name="ElonMusk")
+    DB.session.add(jackblack)
+    DB.session.add(elonmusk)
+    DB.session.commit()

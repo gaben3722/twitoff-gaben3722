@@ -1,17 +1,19 @@
   
 """Prediction of users based on tweet vectors"""
+# np.vstack is like concat but stacks on list on top of another
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from .models import User
 from .twitter import vectorize_tweet
 
-
 def predict_user(user0_name, user1_name, hypo_tweet_text):
     """
-    Determines and returns which user is more likley to say a given tweet.
+    Determines and returns which user 
+    is more likely to say a given tweet.
     Example Run: predict_user("elonmusk", "jackblack", "Tesla Cars are cool")
-    Returns either a 0 (user0_name) or a 1 (user1_name)
+    Returns either 0 (user0_name) or 1 (user1_name)
     """
+
 
     # Grabbing users form our DB - need to exist
     user0 = User.query.filter(User.name == user0_name).one()
@@ -23,7 +25,7 @@ def predict_user(user0_name, user1_name, hypo_tweet_text):
 
     # Vertically stack tweet vectors on top of each other
     vects = np.vstack([user0_vects, user1_vects])
-
+    
     # Creating a list of labels the same length as user0 tweets + user1 tweets
     labels = np.concatenate(
         [np.zeros(len(user0.tweets)), np.ones(len(user1.tweets))])
@@ -33,5 +35,4 @@ def predict_user(user0_name, user1_name, hypo_tweet_text):
 
     # Creating vectors for hypothetical tweet parameter
     hypo_tweet_vect = vectorize_tweet(hypo_tweet_text).reshape(1, -1)
-
     return log_reg.predict(hypo_tweet_vect)
